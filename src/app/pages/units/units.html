@@ -1,0 +1,90 @@
+<div class="min-h-[calc(100vh-64px)] bg-[#f8f9fa] py-12 px-4 sm:px-6 lg:px-8 animate-in fade-in duration-500">
+  <div class="max-w-6xl mx-auto">
+    
+    <!-- Header Section -->
+    <div class="mb-12 text-center">
+      <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight mb-4">Units Explorer</h1>
+      <p class="text-lg text-gray-500 max-w-2xl mx-auto">
+        Learn about the units supported by QMA, their conversion factors, and historical context.
+      </p>
+    </div>
+
+    <!-- Category Selection Tabs -->
+    <div class="flex flex-wrap justify-center gap-4 mb-12">
+      @for (detail of unitDetails; track detail.category) {
+        <button 
+          (click)="selectCategory(detail.category)"
+          [class]="selectedCategory() === detail.category ? 'bg-indigo-600 text-white shadow-lg scale-105' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-100'"
+          class="flex items-center px-6 py-4 rounded-2xl font-bold transition-all duration-300 active:scale-95">
+          <mat-icon class="mr-3">{{ detail.icon }}</mat-icon>
+          {{ detail.category }}
+        </button>
+      }
+    </div>
+
+    <!-- Category Detail Content -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <!-- Summary Card -->
+      <div class="lg:col-span-1">
+        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 sticky top-8">
+          <div class="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 {{ currentCategoryDetail.color }}">
+            <mat-icon class="text-3xl">{{ currentCategoryDetail.icon }}</mat-icon>
+          </div>
+          <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ currentCategoryDetail.category }}</h2>
+          <p class="text-gray-500 mb-8 leading-relaxed">
+            Measurements in the {{ currentCategoryDetail.category }} category are calculated relative to our base unit: 
+            <span class="font-bold text-indigo-600">{{ currentCategoryDetail.baseUnit }}</span>.
+          </p>
+          
+          <div class="space-y-4">
+            <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+              <span class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-1">Base Unit</span>
+              <span class="text-lg font-bold text-gray-900">{{ currentCategoryDetail.baseUnit }}</span>
+            </div>
+            <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+              <span class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-1">Total Units</span>
+              <span class="text-lg font-bold text-gray-900">{{ currentCategoryDetail.units.length }} Supported</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Units List -->
+      <div class="lg:col-span-2 space-y-6">
+        @for (unit of currentCategoryDetail.units; track unit.name) {
+          <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 hover:shadow-md transition-shadow animate-in slide-in-from-right-4 duration-300">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+              <div>
+                <h3 class="text-xl font-bold text-gray-900">{{ unit.name }}</h3>
+                <span class="text-xs font-bold text-indigo-600 uppercase tracking-widest">Symbol: {{ unit.symbol }}</span>
+              </div>
+              <div class="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl font-mono text-sm font-bold border border-indigo-100">
+                Factor: {{ unit.factor }}
+              </div>
+            </div>
+            <p class="text-gray-600 leading-relaxed">
+              {{ unit.description }}
+            </p>
+          </div>
+        }
+      </div>
+
+    </div>
+
+    <!-- Bottom Info -->
+    <div class="mt-16 p-8 bg-indigo-600 rounded-3xl text-white text-center relative overflow-hidden">
+      <div class="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
+      <div class="relative z-10">
+        <h3 class="text-2xl font-bold mb-4">Need to perform a conversion?</h3>
+        <p class="text-indigo-100 mb-8 max-w-xl mx-auto">
+          Now that you know about the units, head over to the operations page to perform instant conversions and arithmetic.
+        </p>
+        <a routerLink="/operations" class="inline-block bg-white text-indigo-600 px-10 py-4 rounded-xl font-bold hover:bg-indigo-50 transition-all active:scale-95 shadow-lg">
+          Go to Operations
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>

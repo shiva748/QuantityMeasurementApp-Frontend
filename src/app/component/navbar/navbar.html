@@ -1,0 +1,210 @@
+<nav class="bg-white border-b border-gray-200">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between h-16">
+      <!-- Left Section: Logo & Desktop Links -->
+      <div class="flex">
+        <div class="flex-shrink-0 flex items-center">
+          <span class="text-2xl font-bold text-indigo-600 tracking-tight">QMA</span>
+        </div>
+        <div class="hidden sm:ml-8 sm:flex sm:space-x-8">
+          <a
+            routerLink="/"
+            class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+            >Home</a
+          >
+          <a
+            routerLink="/units"
+            class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+            >Units</a
+          >
+          @if (authstore.isLoggedIn()) {
+            <a
+              routerLink="/operations"
+              class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+              >Operations</a
+            >
+            <a
+              routerLink="/history"
+              class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+              >History</a
+            >
+          }
+        </div>
+      </div>
+
+      <!-- Right Section: Actions & Profile -->
+      <div class="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-4">
+        @if (!authstore.isLoggedIn()) {
+          <button
+            type="button"
+            class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+            (click)="openLogin()"
+          >
+            Login
+          </button>
+          <button
+            type="button"
+            class="bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2 rounded-md text-sm font-medium transition-colors"
+            (click)="openSignup()"
+          >
+            Register
+          </button>
+        } @else {
+          <!-- Profile dropdown -->
+          <div class="relative ml-3" #profileDropdown>
+            <div>
+              <button
+                type="button"
+                (click)="toggleProfileDropdown()"
+                class="flex text-sm bg-white rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                id="user-menu-button"
+                aria-expanded="false"
+                aria-haspopup="true"
+              >
+                <span class="sr-only">Open user menu</span>
+                <div
+                  class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600"
+                >
+                  <mat-icon class="text-sm">person</mat-icon>
+                </div>
+              </button>
+            </div>
+            @if (isProfileDropdownOpen()) {
+              <div
+                class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+                role="menu"
+                aria-orientation="vertical"
+                aria-labelledby="user-menu-button"
+                tabindex="-1"
+              >
+                <a
+                  routerLink="/profile"
+                  (click)="toggleProfileDropdown()"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  role="menuitem"
+                  tabindex="-1"
+                  >Your Profile</a
+                >
+                <a
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  role="menuitem"
+                  tabindex="-1"
+                  (click)="authstore.logout(); toggleProfileDropdown();"
+                  >Sign out</a
+                >
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Mobile menu button -->
+      <div class="-mr-2 flex items-center sm:hidden">
+        <button
+          type="button"
+          (click)="toggleMobileMenu()"
+          class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+          aria-controls="mobile-menu"
+          aria-expanded="false"
+        >
+          <span class="sr-only">Open main menu</span>
+          @if (!isMobileMenuOpen()) {
+            <mat-icon>menu</mat-icon>
+          } @else {
+            <mat-icon>close</mat-icon>
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile menu, show/hide based on menu state. -->
+  @if (isMobileMenuOpen()) {
+    <div class="sm:hidden" id="mobile-menu">
+      <div class="pt-2 pb-3 space-y-1">
+        <a
+          routerLink="/"
+          class="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
+          >Home</a
+        >
+        <a
+          routerLink="/units"
+          class="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
+          >Units</a
+        >
+        @if (authstore.isLoggedIn()) {
+          <a
+            routerLink="/operations"
+            class="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
+            >Operations</a
+          >
+          <a
+            routerLink="/history"
+            class="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
+            >History</a
+          >
+        }
+      </div>
+      <div class="pt-4 pb-3 border-t border-gray-200">
+        @if (!authstore.isLoggedIn()) {
+          <div class="flex flex-col space-y-2 px-4">
+            <button
+              type="button"
+              class="w-full text-center text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-base font-medium border border-gray-300"
+              (click)="openLogin()"
+            >
+              Login
+            </button>
+            <button
+              type="button"
+              class="w-full text-center bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2 rounded-md text-base font-medium transition-colors"
+              (click)="openSignup()"
+            >
+              Register
+            </button>
+          </div>
+        } @else {
+          <div class="flex items-center px-4">
+            <div class="flex-shrink-0">
+              <div
+                class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600"
+              >
+                <mat-icon>person</mat-icon>
+              </div>
+            </div>
+            <div class="ml-3">
+              <div class="text-base font-medium text-gray-800">
+                {{ authstore.getUserData()?.firstName }}
+              </div>
+              <div class="text-sm font-medium text-gray-500">
+                {{ authstore.getUserData()?.email }}
+              </div>
+            </div>
+          </div>
+          <div class="mt-3 space-y-1">
+            <a
+              routerLink="/profile"
+              class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+              >Your Profile</a
+            >
+            <a
+              class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+              (click)="authstore.logout()"
+              >Sign out</a
+            >
+          </div>
+        }
+      </div>
+    </div>
+  }
+</nav>
+<login [isOpen]="isLoginOpen()" (closeModal)="closeModals()" (switchMode)="openSignup()"></login>
+<signup [isOpen]="isSignupOpen()" (closeModal)="closeModals()" (switchMode)="openLogin()"></signup>
+@if (authstore.isLoggingOut()) {
+  <div class="fixed inset-0 z-[100] flex items-center justify-center bg-white/80 backdrop-blur-sm animate-in fade-in duration-300">
+    <div class="flex flex-col items-center gap-4">
+      <div class="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+      <p class="text-lg font-bold text-gray-900 tracking-tight">Ending your session...</p>
+    </div>
+  </div>
+}

@@ -1,0 +1,406 @@
+<div class="min-h-[calc(100vh-64px)] bg-[#f8f9fa] py-12 px-4 sm:px-6 lg:px-8 animate-in fade-in duration-500">
+  <div class="max-w-4xl mx-auto">
+    
+    <!-- Header Section -->
+    <div class="mb-10 text-center sm:text-left">
+      <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Quantity Operations</h1>
+      <p class="mt-2 text-sm text-gray-500">Perform equality checks, conversions, and arithmetic operations on quantities.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      
+      <!-- Sidebar Navigation -->
+      <aside class="lg:col-span-1">
+        <nav class="space-y-1">
+          <button (click)="setTab('equality')"
+            [class]="activeTab() === 'equality' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'"
+            class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl w-full transition-all">
+            <mat-icon class="mr-3 text-lg" [class.text-indigo-600]="activeTab() === 'equality'">compare_arrows</mat-icon>
+            Equality
+          </button>
+          <button (click)="setTab('convert')"
+            [class]="activeTab() === 'convert' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'"
+            class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl w-full transition-all">
+            <mat-icon class="mr-3 text-lg" [class.text-indigo-600]="activeTab() === 'convert'">swap_horiz</mat-icon>
+            Conversion
+          </button>
+          <button (click)="setTab('add')"
+            [class]="activeTab() === 'add' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'"
+            class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl w-full transition-all">
+            <mat-icon class="mr-3 text-lg" [class.text-indigo-600]="activeTab() === 'add'">add</mat-icon>
+            Addition
+          </button>
+          <button (click)="setTab('subtract')"
+            [class]="activeTab() === 'subtract' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'"
+            class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl w-full transition-all">
+            <mat-icon class="mr-3 text-lg" [class.text-indigo-600]="activeTab() === 'subtract'">remove</mat-icon>
+            Subtraction
+          </button>
+          <button (click)="setTab('divide')"
+            [class]="activeTab() === 'divide' ? 'bg-white text-indigo-600 shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'"
+            class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl w-full transition-all">
+            <mat-icon class="mr-3 text-lg" [class.text-indigo-600]="activeTab() === 'divide'">percent</mat-icon>
+            Division
+          </button>
+        </nav>
+      </aside>
+
+      <!-- Main Content Area -->
+      <main class="lg:col-span-3 space-y-8">
+        
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <div class="px-6 py-8 sm:p-10">
+            
+            <!-- Equality Form -->
+            @if (activeTab() === 'equality') {
+              <div class="animate-in slide-in-from-bottom-4 duration-300">
+                <h3 class="text-lg font-bold text-gray-900 mb-6">Check Equality</h3>
+                <form [formGroup]="equalityForm" (ngSubmit)="onEquality()" class="space-y-6">
+                  <div class="space-y-2">
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Unit Category</span>
+                    <select formControlName="category" class="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm">
+                      @for (cat of unitCategories; track cat) {
+                        <option [value]="cat">{{ cat }}</option>
+                      }
+                    </select>
+                  </div>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                      <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Quantity 1</span>
+                      <div class="flex gap-2">
+                        <input type="number" formControlName="q1_value" class="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm">
+                        <select formControlName="q1_unit" class="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm">
+                          @for (unit of getUnitsForCategory(equalityForm.get('category')?.value); track unit) {
+                            <option [value]="unit">{{ unit }}</option>
+                          }
+                        </select>
+                      </div>
+                    </div>
+                    <div class="space-y-2">
+                      <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Quantity 2</span>
+                      <div class="flex gap-2">
+                        <input type="number" formControlName="q2_value" class="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm">
+                        <select formControlName="q2_unit" class="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm">
+                          @for (unit of getUnitsForCategory(equalityForm.get('category')?.value); track unit) {
+                            <option [value]="unit">{{ unit }}</option>
+                          }
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <button type="submit" [disabled]="isLoading()" class="w-full px-8 py-3 bg-indigo-600 text-white font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100 active:scale-95 disabled:opacity-50">
+                    {{ isLoading() ? 'Checking...' : 'Check Equality' }}
+                  </button>
+                </form>
+              </div>
+            }
+
+            <!-- Conversion Form -->
+            @if (activeTab() === 'convert') {
+              <div class="animate-in slide-in-from-bottom-4 duration-300">
+                <h3 class="text-lg font-bold text-gray-900 mb-6">Convert Quantity</h3>
+                <form [formGroup]="convertForm" (ngSubmit)="onConvert()" class="space-y-6">
+                  <div class="space-y-2">
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Unit Category</span>
+                    <select formControlName="category" class="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm">
+                      @for (cat of unitCategories; track cat) {
+                        <option [value]="cat">{{ cat }}</option>
+                      }
+                    </select>
+                  </div>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                      <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Source Quantity</span>
+                      <div class="flex gap-2">
+                        <input type="number" formControlName="value" class="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm">
+                        <select formControlName="unit" class="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm">
+                          @for (unit of getUnitsForCategory(convertForm.get('category')?.value); track unit) {
+                            <option [value]="unit">{{ unit }}</option>
+                          }
+                        </select>
+                      </div>
+                    </div>
+                    <div class="space-y-2">
+                      <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Target Unit</span>
+                      <select formControlName="targetUnit" class="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm">
+                        @for (unit of getUnitsForCategory(convertForm.get('category')?.value); track unit) {
+                          <option [value]="unit">{{ unit }}</option>
+                        }
+                      </select>
+                    </div>
+                  </div>
+                  <button type="submit" [disabled]="isLoading()" class="w-full px-8 py-3 bg-indigo-600 text-white font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100 active:scale-95 disabled:opacity-50">
+                    {{ isLoading() ? 'Converting...' : 'Convert' }}
+                  </button>
+                </form>
+              </div>
+            }
+
+            <!-- Addition Form -->
+            @if (activeTab() === 'add') {
+              <div class="animate-in slide-in-from-bottom-4 duration-300">
+                <h3 class="text-lg font-bold text-gray-900 mb-6">Add Quantities</h3>
+                <form [formGroup]="addForm" (ngSubmit)="onAdd()" class="space-y-6">
+                  <div class="space-y-2">
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Unit Category</span>
+                    <select formControlName="category" class="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm">
+                      @for (cat of unitCategories; track cat) {
+                        <option [value]="cat">{{ cat }}</option>
+                      }
+                    </select>
+                  </div>
+
+                  @if (!isArithmeticSupported()) {
+                    <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-3">
+                      <mat-icon class="text-amber-600">warning</mat-icon>
+                      <p class="text-sm text-amber-700">Temperature units do not support arithmetic operations.</p>
+                    </div>
+                  }
+
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                      <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Quantity 1</span>
+                      <div class="flex gap-2">
+                        <input type="number" formControlName="q1_value" class="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm">
+                        <select formControlName="q1_unit" class="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm">
+                          @for (unit of getUnitsForCategory(addForm.get('category')?.value); track unit) {
+                            <option [value]="unit">{{ unit }}</option>
+                          }
+                        </select>
+                      </div>
+                    </div>
+                    <div class="space-y-2">
+                      <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Quantity 2</span>
+                      <div class="flex gap-2">
+                        <input type="number" formControlName="q2_value" class="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm">
+                        <select formControlName="q2_unit" class="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm">
+                          @for (unit of getUnitsForCategory(addForm.get('category')?.value); track unit) {
+                            <option [value]="unit">{{ unit }}</option>
+                          }
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="space-y-2">
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Target Unit (Optional)</span>
+                    <select formControlName="targetUnit" class="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm">
+                      <option [value]="null">Default</option>
+                      @for (unit of getUnitsForCategory(addForm.get('category')?.value); track unit) {
+                        <option [value]="unit">{{ unit }}</option>
+                      }
+                    </select>
+                  </div>
+                  <button type="submit" [disabled]="isLoading() || !isArithmeticSupported()" class="w-full px-8 py-3 bg-indigo-600 text-white font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100 active:scale-95 disabled:opacity-50">
+                    {{ isLoading() ? 'Adding...' : 'Add' }}
+                  </button>
+                </form>
+              </div>
+            }
+
+            <!-- Subtraction Form -->
+            @if (activeTab() === 'subtract') {
+              <div class="animate-in slide-in-from-bottom-4 duration-300">
+                <h3 class="text-lg font-bold text-gray-900 mb-6">Subtract Quantities</h3>
+                <form [formGroup]="subtractForm" (ngSubmit)="onSubtract()" class="space-y-6">
+                  <div class="space-y-2">
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Unit Category</span>
+                    <select formControlName="category" class="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm">
+                      @for (cat of unitCategories; track cat) {
+                        <option [value]="cat">{{ cat }}</option>
+                      }
+                    </select>
+                  </div>
+
+                  @if (!isArithmeticSupported()) {
+                    <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-3">
+                      <mat-icon class="text-amber-600">warning</mat-icon>
+                      <p class="text-sm text-amber-700">Temperature units do not support arithmetic operations.</p>
+                    </div>
+                  }
+
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                      <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Quantity 1</span>
+                      <div class="flex gap-2">
+                        <input type="number" formControlName="q1_value" class="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm">
+                        <select formControlName="q1_unit" class="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm">
+                          @for (unit of getUnitsForCategory(subtractForm.get('category')?.value); track unit) {
+                            <option [value]="unit">{{ unit }}</option>
+                          }
+                        </select>
+                      </div>
+                    </div>
+                    <div class="space-y-2">
+                      <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Quantity 2</span>
+                      <div class="flex gap-2">
+                        <input type="number" formControlName="q2_value" class="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm">
+                        <select formControlName="q2_unit" class="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm">
+                          @for (unit of getUnitsForCategory(subtractForm.get('category')?.value); track unit) {
+                            <option [value]="unit">{{ unit }}</option>
+                          }
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="space-y-2">
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Target Unit (Optional)</span>
+                    <select formControlName="targetUnit" class="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm">
+                      <option [value]="null">Default</option>
+                      @for (unit of getUnitsForCategory(subtractForm.get('category')?.value); track unit) {
+                        <option [value]="unit">{{ unit }}</option>
+                      }
+                    </select>
+                  </div>
+                  <button type="submit" [disabled]="isLoading() || !isArithmeticSupported()" class="w-full px-8 py-3 bg-indigo-600 text-white font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100 active:scale-95 disabled:opacity-50">
+                    {{ isLoading() ? 'Subtracting...' : 'Subtract' }}
+                  </button>
+                </form>
+              </div>
+            }
+
+            <!-- Division Form -->
+            @if (activeTab() === 'divide') {
+              <div class="animate-in slide-in-from-bottom-4 duration-300">
+                <h3 class="text-lg font-bold text-gray-900 mb-6">Divide Quantities</h3>
+                <form [formGroup]="divideForm" (ngSubmit)="onDivide()" class="space-y-6">
+                  <div class="space-y-2">
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Unit Category</span>
+                    <select formControlName="category" class="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm">
+                      @for (cat of unitCategories; track cat) {
+                        <option [value]="cat">{{ cat }}</option>
+                      }
+                    </select>
+                  </div>
+
+                  @if (!isArithmeticSupported()) {
+                    <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-3">
+                      <mat-icon class="text-amber-600">warning</mat-icon>
+                      <p class="text-sm text-amber-700">Temperature units do not support arithmetic operations.</p>
+                    </div>
+                  }
+
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                      <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Quantity 1</span>
+                      <div class="flex gap-2">
+                        <input type="number" formControlName="q1_value" class="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm">
+                        <select formControlName="q1_unit" class="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm">
+                          @for (unit of getUnitsForCategory(divideForm.get('category')?.value); track unit) {
+                            <option [value]="unit">{{ unit }}</option>
+                          }
+                        </select>
+                      </div>
+                    </div>
+                    <div class="space-y-2">
+                      <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Quantity 2</span>
+                      <div class="flex gap-2">
+                        <input type="number" formControlName="q2_value" class="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm">
+                        <select formControlName="q2_unit" class="block w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm">
+                          @for (unit of getUnitsForCategory(divideForm.get('category')?.value); track unit) {
+                            <option [value]="unit">{{ unit }}</option>
+                          }
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <button type="submit" [disabled]="isLoading() || !isArithmeticSupported()" class="w-full px-8 py-3 bg-indigo-600 text-white font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100 active:scale-95 disabled:opacity-50">
+                    {{ isLoading() ? 'Dividing...' : 'Divide' }}
+                  </button>
+                </form>
+              </div>
+            }
+
+            <!-- Result Display -->
+            @if (result() || error() || isLoading()) {
+              <div class="mt-10 animate-in slide-in-from-bottom-4 duration-500">
+                @if (isLoading()) {
+                  <div class="flex flex-col items-center justify-center p-10 bg-white rounded-3xl border border-gray-100 shadow-sm">
+                    <div class="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+                    <p class="text-gray-500 text-sm font-medium">Processing calculation...</p>
+                  </div>
+                } @else if (error()) {
+                  <div class="p-6 bg-red-50 rounded-3xl border border-red-100 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-red-100 flex items-center justify-center text-red-600">
+                      <mat-icon>error_outline</mat-icon>
+                    </div>
+                    <div>
+                      <h4 class="text-sm font-bold text-red-900 uppercase tracking-wider">Calculation Failed</h4>
+                      <p class="text-red-700 text-sm">{{ error() }}</p>
+                    </div>
+                  </div>
+                } @else if (result(); as item) {
+                  <div class="bg-white border border-gray-100 rounded-[2rem] p-6 shadow-xl shadow-indigo-100/20 relative overflow-hidden">
+                    <!-- Background Accent -->
+                    <div class="absolute top-0 right-0 w-48 h-48 bg-indigo-50 rounded-full -mr-24 -mt-24 opacity-50"></div>
+                    
+                    <div class="relative z-10">
+                      <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-3">
+                          <span class="px-3 py-1 bg-indigo-600 text-white text-[9px] font-black rounded-full tracking-widest uppercase shadow-lg shadow-indigo-200">
+                            Live Result
+                          </span>
+                          <div class="flex items-center gap-2 text-gray-400">
+                            <mat-icon class="text-sm scale-75">{{ getTypeIcon(item.thisMeasurementType) }}</mat-icon>
+                            <span class="text-[9px] font-bold uppercase tracking-widest">{{ item.thisMeasurementType }}</span>
+                          </div>
+                        </div>
+                        <div class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Ref #{{ item.id.toString().padStart(4, '0') }}</div>
+                      </div>
+
+                      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                        <!-- Inputs -->
+                        <div class="lg:col-span-7 flex items-center justify-between bg-gray-50 rounded-2xl p-4 border border-gray-100">
+                          <div class="flex flex-col items-center text-center px-2">
+                            <span class="text-2xl font-black text-gray-900 tracking-tighter font-mono">{{ getDisplayValue(item.thisValue) }}</span>
+                            <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">{{ item.thisUnit }}</span>
+                          </div>
+
+                          <div class="relative flex items-center justify-center">
+                            <div class="absolute inset-0 bg-indigo-200 blur-xl opacity-20 rounded-full"></div>
+                            <div class="relative w-10 h-10 rounded-full bg-white border border-indigo-50 shadow-md flex items-center justify-center text-indigo-600">
+                              <mat-icon class="text-lg">{{ getOperationIcon(item.operation) }}</mat-icon>
+                            </div>
+                          </div>
+
+                          <div class="flex flex-col items-center text-center px-2">
+                            <span class="text-2xl font-black text-gray-900 tracking-tighter font-mono">{{ getDisplayValue(item.thatValue) }}</span>
+                            <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">{{ item.thatUnit || '-' }}</span>
+                          </div>
+                        </div>
+
+                        <!-- Arrow -->
+                        <div class="hidden lg:flex lg:col-span-1 justify-center text-gray-300">
+                          <mat-icon class="text-2xl">arrow_forward</mat-icon>
+                        </div>
+
+                        <!-- Result -->
+                        <div class="lg:col-span-4">
+                          <div class="bg-indigo-600 rounded-2xl p-6 flex flex-col items-center justify-center text-white shadow-xl shadow-indigo-200 relative overflow-hidden group">
+                            <div class="absolute top-0 right-0 p-3 opacity-10 group-hover:scale-110 transition-transform">
+                              <mat-icon class="text-4xl">check_circle</mat-icon>
+                            </div>
+                            
+                            <span class="text-[9px] font-bold uppercase tracking-widest opacity-70 mb-1">Final Output</span>
+                            
+                            @if (item.resultValue !== undefined && item.resultValue !== null) {
+                              <div class="flex items-baseline gap-1">
+                                <span class="text-3xl font-black tracking-tighter font-mono">{{ getDisplayValue(item.resultValue) }}</span>
+                                <span class="text-[10px] font-bold uppercase">{{ item.resultUnit }}</span>
+                              </div>
+                            } @else {
+                              <span class="text-xl font-black uppercase tracking-tight">{{ item.resultString }}</span>
+                            }
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>

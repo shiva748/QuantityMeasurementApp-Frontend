@@ -1,0 +1,158 @@
+<div class="max-w-5xl mx-auto py-12 px-4 animate-in fade-in duration-500">
+  <!-- Header Section -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-12">
+    <div>
+      <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight">Audit Log</h1>
+      <p class="text-gray-500 mt-2 font-medium">Detailed record of all measurement operations and system calculations.</p>
+    </div>
+    <button 
+      (click)="clearAll()"
+      class="inline-flex items-center justify-center px-6 py-3 border border-red-200 text-red-600 font-semibold text-sm rounded-xl hover:bg-red-50 transition-all shadow-sm active:scale-95"
+    >
+      <mat-icon class="mr-2">delete_sweep</mat-icon>
+      Clear History
+    </button>
+  </div>
+
+  <!-- History List -->
+  <div class="space-y-6">
+    @if (isLoading()) {
+      <div class="py-32 flex flex-col items-center justify-center text-center bg-gray-50 rounded-[3rem] border-2 border-dashed border-gray-200">
+        <div class="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p class="text-gray-500 font-medium">Fetching audit logs...</p>
+      </div>
+    } @else if (error()) {
+      <div class="p-8 bg-red-50 rounded-3xl border border-red-100 flex items-center gap-4">
+        <div class="w-12 h-12 rounded-2xl bg-red-100 flex items-center justify-center text-red-600">
+          <mat-icon>error_outline</mat-icon>
+        </div>
+        <div>
+          <h4 class="text-lg font-bold text-red-900">Failed to load history</h4>
+          <p class="text-red-700">{{ error() }}</p>
+          <button (click)="fetchHistory()" class="mt-4 text-sm font-bold text-red-600 hover:underline">Try Again</button>
+        </div>
+      </div>
+    } @else {
+      @for (item of historyItems(); track item.id) {
+      <div class="group relative bg-white border border-gray-100 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all duration-300">
+        <!-- Top Row: ID and Type -->
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center gap-3">
+            <span class="px-3 py-1 bg-gray-100 text-gray-500 font-mono text-[10px] font-bold rounded-full tracking-wider uppercase">
+              Ref #{{ item.id.toString().padStart(4, '0') }}
+            </span>
+            <div class="flex items-center gap-1.5 text-gray-400">
+              <mat-icon class="text-sm scale-75">{{ getTypeIcon(item.thisMeasurementType) }}</mat-icon>
+              <span class="text-[10px] font-bold uppercase tracking-widest">{{ item.thisMeasurementType }}</span>
+            </div>
+          </div>
+          
+          <div class="text-right">
+            <div class="text-xs font-bold text-gray-900">{{ item.timestamp | date:'HH:mm:ss' }}</div>
+            <div class="text-[10px] font-medium text-gray-400 uppercase tracking-tighter">{{ item.timestamp | date:'dd MMM yyyy' }}</div>
+          </div>
+        </div>
+
+        <!-- Main Content: The Operation -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <!-- Inputs -->
+          <div class="lg:col-span-7 flex items-center justify-between bg-gray-50/50 rounded-2xl p-4 border border-gray-50">
+            <div class="flex flex-col items-center text-center px-4">
+              <span class="text-3xl font-black text-gray-900 tracking-tighter font-mono">{{ getDisplayValue(item.thisValue) }}</span>
+              <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ item.thisUnit }}</span>
+            </div>
+
+            <div class="relative flex items-center justify-center">
+              <div class="absolute inset-0 bg-indigo-100 blur-xl opacity-20 rounded-full"></div>
+              <div class="relative w-10 h-10 rounded-full bg-white border border-indigo-50 shadow-sm flex items-center justify-center text-indigo-600">
+                <mat-icon class="text-lg">{{ getOperationIcon(item.operation) }}</mat-icon>
+              </div>
+            </div>
+
+            <div class="flex flex-col items-center text-center px-4">
+              <span class="text-3xl font-black text-gray-900 tracking-tighter font-mono">{{ getDisplayValue(item.thatValue) }}</span>
+              <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{{ item.thatUnit || '-' }}</span>
+            </div>
+          </div>
+
+          <!-- Arrow / Divider for Desktop -->
+          <div class="hidden lg:flex lg:col-span-1 justify-center text-gray-200">
+            <mat-icon>arrow_forward</mat-icon>
+          </div>
+
+          <!-- Result Card -->
+          <div class="lg:col-span-4">
+            <div 
+              [class.bg-red-50]="item.isError"
+              [class.border-red-100]="item.isError"
+              [class.bg-indigo-600]="!item.isError"
+              [class.text-white]="!item.isError"
+              class="relative overflow-hidden rounded-2xl p-5 flex flex-col items-center justify-center min-h-[100px] shadow-lg shadow-indigo-200/20"
+            >
+              @if (!item.isError) {
+                <div class="absolute top-0 right-0 p-2 opacity-10">
+                  <mat-icon class="text-4xl">check_circle</mat-icon>
+                </div>
+                <span class="text-[10px] font-bold uppercase tracking-widest opacity-70 mb-1">Calculation Result</span>
+                
+                @if (item.resultValue !== undefined && item.resultValue !== null) {
+                  <div class="flex items-baseline gap-1">
+                    <span class="text-3xl font-black tracking-tighter font-mono">{{ getDisplayValue(item.resultValue) }}</span>
+                    <span class="text-xs font-bold uppercase">{{ item.resultUnit }}</span>
+                  </div>
+                } @else {
+                  <span class="text-2xl font-black uppercase tracking-tight">{{ item.resultString }}</span>
+                }
+              } @else {
+                <div class="flex items-center gap-2 text-red-600 mb-1">
+                  <mat-icon class="text-sm">error</mat-icon>
+                  <span class="text-[10px] font-bold uppercase tracking-widest">System Fault</span>
+                </div>
+                <p class="text-xs text-red-700 font-medium text-center leading-tight">{{ item.errorMessage }}</p>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Hover Effect Accent -->
+        <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-12 bg-indigo-600 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+      </div>
+    } @empty {
+      <div class="py-32 flex flex-col items-center justify-center text-center bg-gray-50 rounded-[3rem] border-2 border-dashed border-gray-200">
+        <div class="w-20 h-20 bg-white rounded-3xl shadow-sm flex items-center justify-center text-gray-300 mb-6">
+          <mat-icon class="text-4xl">history_toggle_off</mat-icon>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-900">No logs found</h3>
+        <p class="text-gray-500 max-w-xs mx-auto mt-2">The system audit trail is currently empty. Start by performing a new measurement.</p>
+        <a routerLink="/operations" class="mt-8 px-8 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 active:scale-95">
+          New Calculation
+        </a>
+      </div>
+    }
+  }
+  </div>
+
+  <!-- Summary Footer -->
+  @if (historyItems().length > 0) {
+    <div class="mt-16 flex flex-col sm:flex-row items-center justify-between gap-6 p-8 bg-gray-900 rounded-[2.5rem] text-white">
+      <div class="flex gap-12">
+        <div class="flex flex-col">
+          <span class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Total Operations</span>
+          <span class="text-3xl font-black font-mono">{{ historyItems().length }}</span>
+        </div>
+        <div class="flex flex-col">
+          <span class="text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">System Status</span>
+          <div class="flex items-center gap-2">
+            <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+            <span class="text-xl font-bold font-mono">ONLINE</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="text-right hidden sm:block">
+        <p class="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Quantity Measurement App</p>
+        <p class="text-xs font-medium opacity-50">v1.0.0-stable</p>
+      </div>
+    </div>
+  }
+</div>

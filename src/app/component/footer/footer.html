@@ -1,0 +1,88 @@
+<footer class="bg-white border-t border-gray-100 mt-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+      <!-- Brand Section -->
+      <div class="col-span-1 md:col-span-2">
+        <div class="flex items-center gap-2 mb-6">
+          <span class="text-xl font-bold text-gray-900 tracking-tight">QMA</span>
+        </div>
+        <p class="text-gray-500 max-w-sm mb-6">
+          Universal Quantity Measurement and Conversion application. Providing precision and
+          simplicity for all your measurement needs.
+        </p>
+        <div class="flex gap-4">
+          <a
+            href="#"
+            class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-indigo-50 hover:text-indigo-600 transition-all"
+          >
+            <mat-icon class="text-lg">facebook</mat-icon>
+          </a>
+          <a
+            href="#"
+            class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-indigo-50 hover:text-indigo-600 transition-all"
+          >
+            <mat-icon class="text-lg">alternate_email</mat-icon>
+          </a>
+          <a
+            href="#"
+            class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-indigo-50 hover:text-indigo-600 transition-all"
+          >
+            <mat-icon class="text-lg">language</mat-icon>
+          </a>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div>
+        <h3 class="text-sm font-bold text-gray-900 uppercase tracking-widest mb-6">Navigation</h3>
+        <ul class="space-y-4">
+          <li>
+            <a routerLink="/" class="text-gray-500 hover:text-indigo-600 transition-colors">Home</a>
+          </li>
+          <li>
+            <a routerLink="/units" class="text-gray-500 hover:text-indigo-600 transition-colors"
+              >Units Explorer</a
+            >
+          </li>
+          @if (authStore.isLoggedIn()) {
+            <li>
+              <a
+                routerLink="/operations"
+                class="text-gray-500 hover:text-indigo-600 transition-colors"
+                >Operations</a
+              >
+            </li>
+            <li>
+              <a routerLink="/history" class="text-gray-500 hover:text-indigo-600 transition-colors"
+                >History</a
+              >
+            </li>
+          }
+        </ul>
+      </div>
+
+      <!-- Support -->
+      <div>
+        <h3 class="text-sm font-bold text-gray-900 uppercase tracking-widest mb-6">Support</h3>
+        <ul class="space-y-4">
+          <li>
+            <a routerLink="/api-docs" class="text-gray-500 hover:text-indigo-600 transition-colors"
+              >API Documentation</a
+            >
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div
+      class="mt-12 pt-8 border-t border-gray-50 flex flex-col md:flex-row justify-between items-center gap-4"
+    >
+      <p class="text-sm text-gray-400">&copy; {{ currentYear }} QMA. All rights reserved.</p>
+      <div class="flex items-center gap-2 text-sm text-gray-400">
+        <span>Made with</span>
+        <mat-icon class="text-red-500 text-sm">favorite</mat-icon>
+        <span>for precision.</span>
+      </div>
+    </div>
+  </div>
+</footer>

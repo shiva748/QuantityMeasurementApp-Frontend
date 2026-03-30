@@ -1,0 +1,82 @@
+<div
+  class="min-h-[80vh] flex items-center justify-center px-4 sm:px-6 lg:px-8 bg-white overflow-hidden relative"
+>
+  <!-- Background Decorative Elements -->
+  <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+    <div
+      class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-50 rounded-full blur-3xl opacity-50"
+    ></div>
+    <div
+      class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-50 rounded-full blur-3xl opacity-50"
+    ></div>
+
+    <!-- Floating Rulers/Measurements icons -->
+    <mat-icon class="absolute top-[20%] right-[15%] text-gray-100 text-8xl rotate-12"
+      >straighten</mat-icon
+    >
+    <mat-icon class="absolute bottom-[20%] left-[10%] text-gray-100 text-9xl -rotate-12"
+      >scale</mat-icon
+    >
+    <mat-icon class="absolute top-[60%] left-[5%] text-gray-50 text-7xl rotate-45"
+      >thermostat</mat-icon
+    >
+  </div>
+
+  <div class="max-w-md w-full text-center relative z-10">
+    <!-- 404 Number with Measurement Theme -->
+    <div class="relative inline-block mb-8">
+      <h1 class="text-[10rem] font-black text-gray-900 leading-none tracking-tighter select-none">
+        4<span class="text-indigo-600">0</span>4
+      </h1>
+      <div
+        class="absolute -bottom-4 left-0 w-full h-2 bg-indigo-600 rounded-full shadow-lg shadow-indigo-200"
+      ></div>
+
+      <!-- Measurement Marker Overlay -->
+      <div
+        class="absolute top-0 left-0 w-full h-full flex items-center justify-between px-4 pointer-events-none opacity-20"
+      >
+        @for (i of [1, 2, 3, 4, 5, 6, 7, 8]; track i) {
+          <div class="w-px h-8 bg-black"></div>
+        }
+      </div>
+    </div>
+
+    <div class="space-y-6">
+      <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Out of Bounds</h2>
+      <p class="text-lg text-gray-500 font-medium leading-relaxed">
+        The measurement you're looking for doesn't exist in our system. It seems this page has been
+        converted to nothingness.
+      </p>
+
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
+        <a
+          routerLink="/"
+          class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-200 active:scale-95"
+        >
+          <mat-icon class="mr-2">home</mat-icon>
+          Back to Safety
+        </a>
+        @if (authStore.isLoggedIn()) {
+          <a
+            routerLink="/operations"
+            class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 border-2 border-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-50 transition-all active:scale-95"
+          >
+            <mat-icon class="mr-2">calculate</mat-icon>
+            New Calculation
+          </a>
+        }
+      </div>
+    </div>
+
+    <!-- Technical Detail -->
+    <div class="mt-16 pt-8 border-t border-gray-100">
+      <div class="flex items-center justify-center gap-2 text-gray-400">
+        <mat-icon class="text-sm">error_outline</mat-icon>
+        <span class="text-[10px] font-bold uppercase tracking-widest"
+          >Error Code: ERR_UNIT_NOT_FOUND</span
+        >
+      </div>
+    </div>
+  </div>
+</div>
