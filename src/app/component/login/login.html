@@ -126,6 +126,7 @@
             <div>
               <button
                 type="button"
+                disabled
                 (click)="authStore.loginWithGoogle()"
                 class="w-full inline-flex justify-center py-3 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
               >
@@ -155,7 +156,7 @@
                 <span>Sign in with Google</span>
               </button>
             </div>
-            <!-- <span style="color: red;">Google OAuth works only on a valid deployed domain.</span> -->
+            <span style="color: red;">Google OAuth works only on a valid deployed domain.</span>
           </form>
         </div>
       </div>

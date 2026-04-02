@@ -1,12 +1,14 @@
-import { Injectable, signal, WritableSignal } from '@angular/core';
+import { Injectable, signal, WritableSignal, inject } from '@angular/core';
 import { UserData } from '../model/user.model';
 import { Router } from '@angular/router';
 import { ApiResponse } from '../model/api-response.model';
+import { Toast } from './toast';
 
 @Injectable({
   providedIn: 'root',
 })
 export class Auth {
+  toast = inject(Toast);
   constructor(private router: Router) {}
   private loggedIn: WritableSignal<boolean> = signal(false);
   private userData: WritableSignal<UserData | null> = signal(null);
@@ -39,7 +41,7 @@ export class Auth {
         this.loggedIn.set(false);
         this.router.navigate(['/']);
       }
-      console.log(data.message);
+      this.toast.info(data.message);
     } catch (error) {
       console.error('Error checking session', error);
     } finally {
@@ -66,6 +68,6 @@ export class Auth {
   }
 
   loginWithGoogle() {
-    window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+    window.location.href = '/oauth2/authorization/google';
   }
 }

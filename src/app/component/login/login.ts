@@ -1,13 +1,14 @@
-import {ChangeDetectionStrategy, Component, inject, input, output, signal} from '@angular/core';
-import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
-import {MatIconModule} from '@angular/material/icon';
+import { ChangeDetectionStrategy, Component, inject, input, output, signal } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 import { Auth } from '../../service/auth';
 import { ApiResponse } from '../../model/api-response.model';
 import { UserData } from '../../model/user.model';
+import { Toast } from '../../service/toast';
 
-interface LoginData{
-  email:string;
-  password:string;
+interface LoginData {
+  email: string;
+  password: string;
 }
 
 @Component({
@@ -18,6 +19,7 @@ interface LoginData{
 })
 export class Login {
   authStore = inject(Auth);
+  toast = inject(Toast);
   isOpen = input<boolean>(false);
   closeModal = output<void>();
   switchMode = output<void>();
@@ -30,28 +32,28 @@ export class Login {
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(8)]],
   });
-  private async login (){
+  private async login() {
     this.isLoading.set(true);
-    try{
-      const loginData:LoginData = this.loginForm.getRawValue();
+    try {
+      const loginData: LoginData = this.loginForm.getRawValue();
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(loginData)
-      })
-      if(res.ok){
-        let data:ApiResponse<UserData> = await res.json();
+        body: JSON.stringify(loginData),
+      });
+      if (res.ok) {
+        let data: ApiResponse<UserData> = await res.json();
         this.authStore.markAsLoggedIn(data.data);
-        console.log(data.message);
+        this.toast.success('Login successful!');
         this.closeModal.emit();
-      }else{
-        console.error('Login failed with status', res.status);
+      } else {
+        this.toast.error('Login failed. Please check your credentials.');
       }
-    }catch (error){
+    } catch (error) {
       console.error('Login failed', error);
-    }finally{
+    } finally {
       this.isLoading.set(false);
     }
   }

@@ -44,14 +44,14 @@
               >Units Explorer</a
             >
           </li>
+          <li>
+            <a
+              routerLink="/operations"
+              class="text-gray-500 hover:text-indigo-600 transition-colors"
+              >Operations</a
+            >
+          </li>
           @if (authStore.isLoggedIn()) {
-            <li>
-              <a
-                routerLink="/operations"
-                class="text-gray-500 hover:text-indigo-600 transition-colors"
-                >Operations</a
-              >
-            </li>
             <li>
               <a routerLink="/history" class="text-gray-500 hover:text-indigo-600 transition-colors"
                 >History</a
@@ -66,7 +66,7 @@
         <h3 class="text-sm font-bold text-gray-900 uppercase tracking-widest mb-6">Support</h3>
         <ul class="space-y-4">
           <li>
-            <a routerLink="/api-docs" class="text-gray-500 hover:text-indigo-600 transition-colors"
+            <a href="/swagger-ui/index.html#/" class="text-gray-500 hover:text-indigo-600 transition-colors"
               >API Documentation</a
             >
           </li>

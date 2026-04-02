@@ -344,7 +344,7 @@
                             <span class="text-[9px] font-bold uppercase tracking-widest">{{ item.thisMeasurementType }}</span>
                           </div>
                         </div>
-                        <div class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Ref #{{ item.id.toString().padStart(4, '0') }}</div>
+                        <div class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Ref #{{ item.id?.toString() || "N/A" }}</div>
                       </div>
 
                       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">

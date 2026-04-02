@@ -3,6 +3,7 @@ import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 import { ApiResponse } from '../../model/api-response.model';
 import { Auth } from '../../service/auth';
+import { Toast } from '../../service/toast';
 
 
 @Component({
@@ -13,6 +14,7 @@ import { Auth } from '../../service/auth';
 })
 export class Signup {
   authStore = inject(Auth);
+  toast = inject(Toast);
   isOpen = input<boolean>(false);
   closeModal = output<void>();
   switchMode = output<void>();
@@ -39,13 +41,15 @@ export class Signup {
         body: JSON.stringify(signupData)
       })
       let data: ApiResponse<null> = await res.json();
+      console.log('Signup response', data);
       if(res.ok){
-         console.log(data.message);
+         this.toast.success('Signup successful! Please login to continue.');
          this.closeModal.emit();
+      }else{
+         this.toast.error(`Signup failed. ${data.message}`);
       }
-      console.log(data.message);
     }catch (error){
-      console.error('Signup failed', error);
+      this.toast.error('An error occurred during signup. Please try again later.');
     }finally{
       this.isLoading.set(false);
     }

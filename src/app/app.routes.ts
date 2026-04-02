@@ -14,7 +14,7 @@ import { NotFound } from './pages/not-found/not-found';
 export const routes: Routes = [
     {path:"", component:Home},
     {path:"profile", component:Profile, canActivate: [AuthGuard]},
-    {path:"operations", component:Operations, canActivate: [AuthGuard]},
+    {path:"operations", component:Operations},
     {path:"units", component:Units},
     {path:"history", component:History, canActivate: [AuthGuard]},
     {path:"api-docs", component:Docs},

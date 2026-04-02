@@ -17,7 +17,7 @@ export interface QuantityValue {
 }
 
 export interface QuantityResponseDto {
-  id: number;
+  id: number | null;
   thisValue: number | QuantityValue;
   thisUnit: string;
   thisMeasurementType: string;
